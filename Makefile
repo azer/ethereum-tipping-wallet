@@ -11,6 +11,9 @@ help: Makefile
 	@sed -n 's/^##//p' $< | column -t -s ':' |  sed -e 's/^/ /'
 	@echo
 
+## build: Build everything into 'dist' folder.
+build: chrome/build background/compile content/compile popup/compile
+
 ## chrome/build: Build Chrome extension files
 chrome/build:
 	@cp chrome-extension-manifest.json dist/manifest.json
@@ -21,7 +24,7 @@ background/compile:
 	@cd background; ./node_modules/.bin/browserify src/main.ts  -p [ tsify --noImplicitAny ] > ../dist/background.js
 	@notify-send "Ready" "Background is compiled and ready" -u normal -t 1000
 
-## background/compile: Compile TypeScript into JavaScript
+## background/watch: Watch for changes and compile
 background/watch: background/compile
 	@yolo -i background/src -c "make background/compile"
 
@@ -31,7 +34,7 @@ content/compile:
 	@cd content; ./node_modules/.bin/browserify src/main.ts  -p [ tsify --noImplicitAny ] > ../dist/content.js
 	@notify-send "Ready" "Content is compiled and ready" -u normal -t 1000
 
-## content/compile: Compile TypeScript into JavaScript
+## content/watch: Watch for changes and compile
 content/watch: content/compile
 	@yolo -i content/src -c "make content/compile"
 
