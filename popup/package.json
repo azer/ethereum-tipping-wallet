@@ -1,0 +1,15 @@
+{
+  "name": "tipping-extension",
+  "homepage": ".",
+  "dependencies": {
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "roka": "github:azer/roka"
+  },
+  "devDependencies": {
+    "@types/react": "^16.8.18",
+    "@types/react-dom": "^16.8.4",
+    "react-scripts-ts": "^3.1.0",
+    "typescript": "^3.4.5"
+  }
+}
