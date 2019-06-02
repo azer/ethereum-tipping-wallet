@@ -45,5 +45,3 @@ It's pointing to testnet (Rinkeby) and it's not released in the Chrome Web Store
   popup/compile        Compile TypeScript into JavaScript
   popup/watch          Run `make compile` at every change. (github.com/azer/yolo required)
 ```
-
-TODO
