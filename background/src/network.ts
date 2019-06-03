@@ -62,98 +62,63 @@ export async function transferTips(msg: Message, callback: Callback) {
     return callback(new Error("Wallet is inaccessible."))
   }
 
-  let transaction
-  try {
-    transaction = await transfer(
-      context.wallet.address || "",
-      to,
-      context.wallet.privateKey || "",
-      amount
-    )
-  } catch (err) {
+  const [txhash, err] = await transferFunds(
+    "0x" + (context.wallet.address || ""),
+    to,
+    context.wallet.privateKey || "",
+    amount
+  )
+
+  if (err) {
     return callback(err)
   }
 
-  callback(undefined, { transaction })
+  callback(undefined, { txhash: txhash })
 }
 
-export function transfer(
+export async function transferFunds(
   fromAddress: string,
   toAddress: string,
   privateKey: string,
   amount: string
-): Promise<ITransactionResult> {
-  return new Promise(async (resolve, reject) => {
-    const nonce = network.utils.numberToHex(
-      await network.eth.getTransactionCount(fromAddress)
-    )
+): Promise<[string | null, Error | null]> {
+  const transactionCount = await network.eth.getTransactionCount(fromAddress)
+  const gasLimitNumber = await network.eth.estimateGas({
+    to: toAddress,
+    data: ""
+  })
+  const gasPriceNumber = await network.eth.getGasPrice()
 
-    const gasPrice = network.utils.numberToHex(await network.eth.getGasPrice())
-    const gasLimit = network.utils.numberToHex(
-      await network.eth.estimateGas({ to: toAddress, data: "" })
-    )
+  const nonce = network.utils.numberToHex(transactionCount)
+  const gasPrice = network.utils.numberToHex(Number(gasPriceNumber))
+  const gasLimit = network.utils.numberToHex(gasLimitNumber)
+  const value = network.utils.numberToHex(
+    Number(network.utils.toWei(amount, "ether"))
+  )
 
-    const value = network.utils.numberToHex(
-      Number(network.utils.toWei(amount, "ether"))
-    )
+  const tx = new Tx({
+    nonce,
+    gasPrice,
+    gasLimit,
+    to: toAddress,
+    value,
+    data: ""
+  })
 
-    console.log("from: %s to: %s pk: %s", fromAddress, toAddress, privateKey)
-    console.log(
-      "amount: %s gasPrice: %s gasLimit: %s",
-      amount,
-      gasPrice,
-      gasLimit
-    )
+  tx.sign(privateKey)
 
-    const tx = new Tx({
-      nonce,
-      gasPrice,
-      gasLimit,
-      toAddress,
-      value,
-      data: ""
-    })
+  return sendTransaction("0x" + tx.serialize().toString("hex"))
+}
 
-    tx.sign(privateKey)
-
-    let transactionHash: string
-    let receipt: object
-    let error: Error
-    let isDone: boolean = false
-
+function sendTransaction(tx: string): Promise<[string | null, Error | null]> {
+  return new Promise((resolve, reject) => {
     network.eth
-      .sendSignedTransaction("0x" + tx.serialize().toString("hex"))
-      .once("transactionHash", (_hash: string) => {
-        transactionHash = _hash
-        done()
+      .sendSignedTransaction(tx)
+      .once("transactionHash", (hash: string) => {
+        resolve([hash, null])
       })
-      .once("receipt", (_receipt: object) => {
-        receipt = _receipt
-        done()
+      .once("error", (err: Error) => {
+        resolve([null, err])
       })
-      .once("error", (_error: Error) => {
-        error = _error
-        done()
-      })
-
-    function done() {
-      if (isDone) {
-        return
-      }
-
-      if (error) {
-        isDone = true
-        reject(error)
-        return
-      }
-
-      if (transactionHash && receipt) {
-        isDone = true
-        resolve({
-          hash: transactionHash,
-          receipt
-        } as ITransactionResult)
-      }
-    }
   })
 }

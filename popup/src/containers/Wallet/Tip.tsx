@@ -107,7 +107,7 @@ export default ({
   setError
 }: IProps) => {
   const [amount, setAmount] = useState()
-  const [transaction, setTransaction] = useState()
+  const [transactionHash, setTransactionHash] = useState()
   const [inProgress, setInProgress] = useState()
   const [showDetails, setShowDetails] = useState()
 
@@ -126,8 +126,8 @@ export default ({
       return setError(err)
     }
 
-    if (response.transaction) {
-      setTransaction(response.transaction)
+    if (response.txhash) {
+      setTransactionHash(response.txhash)
     }
   }
 
@@ -141,12 +141,8 @@ export default ({
     <Tip>
       <Header>{meta.host} accepts tips!</Header>
       {error ? <Callout error={error.message} /> : null}
-      {transaction ? (
-        <Callout
-          success={`Done! Hash: ${transaction.hash} Receipt: ${JSON.stringify(
-            transaction.receipt
-          )}`}
-        />
+      {transactionHash ? (
+        <Callout success={`Done! Transaction Hash: ${transactionHash}`} />
       ) : null}
       <Profile>
         <Image src={meta.image} />

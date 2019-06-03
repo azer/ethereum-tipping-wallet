@@ -8,11 +8,6 @@ export interface IWallet {
   filename?: string
 }
 
-interface ITransactionResult {
-  hash: string
-  receipt: object
-}
-
 export function getWallet(): Promise<
   [{ wallet: IWallet | null }, Error | null]
 > {
@@ -111,12 +106,12 @@ export function getGasLimit(): Promise<
 export function transferTips(
   to: string,
   amount: string
-): Promise<[{ transaction: ITransactionResult | null }, Error | null]> {
+): Promise<[{ txhash: string | null }, Error | null]> {
   return client.send({
     to: background,
     content: { command: "transferTips", amount, to },
     requiresReply: true
-  }) as Promise<[{ transaction: ITransactionResult | null }, Error | null]>
+  }) as Promise<[{ txhash: string | null }, Error | null]>
 }
 
 export function signout(): Promise<[{ balance: string | null }, Error | null]> {
