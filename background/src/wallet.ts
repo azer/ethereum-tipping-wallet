@@ -9,6 +9,8 @@ import * as ethwallet from "ethereumjs-wallet"
 // @ts-ignore
 import * as hdkey from "ethereumjs-wallet/hdkey"
 
+const work = require("webworkify")
+
 export function getWallet(msg: Message, callback: Callback) {
   callback(undefined, { wallet: context.getWallet() })
 }
@@ -16,30 +18,16 @@ export function getWallet(msg: Message, callback: Callback) {
 export function createWallet(msg: Message, callback: Callback) {
   const password: string = msg.content["password"] as string
 
-  let address, keystore, filename, privateKey
-
-  try {
-    const mnemonic = bip39.generateMnemonic()
-    const hdwallet = hdkey.fromMasterSeed(mnemonic)
-    const wallet = hdwallet.getWallet()
-    address = wallet.getAddress().toString("hex")
-    keystore = wallet.toV3(password)
-    filename = wallet.getV3Filename(Date.now())
-    privateKey = wallet.getPrivateKey()
-  } catch (err) {
-    callback(err)
-  }
-
-  context.setWallet({
-    address,
-    privateKey,
-    keystore,
-    filename
+  const w = work(require("./workers/create-wallet"))
+  w.addEventListener("message", function(ev: { data: string }) {
+    const wallet = JSON.parse(ev.data).wallet
+    context.setWallet(wallet)
+    callback(undefined, {
+      wallet: context.getWallet()
+    })
   })
 
-  callback(undefined, {
-    wallet: context.getWallet()
-  })
+  w.postMessage(JSON.stringify({ password }))
 }
 
 export function restoreWalletByPK(msg: Message, callback: Callback) {
@@ -89,19 +77,14 @@ export function restoreWalletByKeystore(msg: Message, callback: Callback) {
   const keystore: string = msg.content["keystore"] as string
   const password: string = msg.content["password"] as string
 
-  let wallet
-  try {
-    wallet = ethwallet.fromV3(keystore.toLowerCase(), password)
-  } catch (err) {
-    callback(err)
-  }
-
-  context.setWallet({
-    address: wallet.getAddress().toString("hex"),
-    privateKey: wallet.getPrivateKey()
+  const w = work(require("./workers/restore-wallet"))
+  w.addEventListener("message", function(ev: { data: string }) {
+    const wallet = JSON.parse(ev.data).wallet
+    context.setWallet(wallet)
+    callback(undefined, {
+      wallet: context.getWallet()
+    })
   })
 
-  callback(undefined, {
-    wallet: context.getWallet()
-  })
+  w.postMessage(JSON.stringify({ password, keystore }))
 }

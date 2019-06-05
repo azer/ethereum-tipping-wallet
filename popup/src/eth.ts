@@ -21,11 +21,14 @@ export function getWallet(): Promise<
 export function createWallet(
   password: string
 ): Promise<[{ wallet: IWallet | null }, Error | null]> {
-  return client.send({
-    to: background,
-    content: { command: "createWallet", password },
-    requiresReply: true
-  }) as Promise<[{ wallet: IWallet | null }, Error | null]>
+  return client.send(
+    {
+      to: background,
+      content: { command: "createWallet", password },
+      requiresReply: true
+    },
+    30
+  ) as Promise<[{ wallet: IWallet | null }, Error | null]>
 }
 
 export function restoreWallet(
@@ -64,11 +67,14 @@ export function restoreWalletByKeystore(
   keystore: string,
   password: string
 ): Promise<[{ wallet: IWallet | null }, Error | null]> {
-  return client.send({
-    to: background,
-    content: { command: "restoreWalletByKeystore", keystore, password },
-    requiresReply: true
-  }) as Promise<[{ wallet: IWallet | null }, Error | null]>
+  return client.send(
+    {
+      to: background,
+      content: { command: "restoreWalletByKeystore", keystore, password },
+      requiresReply: true
+    },
+    30
+  ) as Promise<[{ wallet: IWallet | null }, Error | null]>
 }
 
 export function getBalance(
