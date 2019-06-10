@@ -7,6 +7,7 @@ import Wallet from "./containers/Wallet"
 import { Heading, Subheading } from "./components/Typography"
 import { getWallet, signout as sendSignoutSignal } from "./eth"
 import { getCurrentMeta } from "./tab"
+import DONATION_META from "./donation-meta"
 
 const Popup = roka()
   .size({ width: "20rem" })
@@ -24,7 +25,7 @@ export default () => {
   const [restoringWallet, setRestoreWallet] = useState(false)
   const [wallet, setWallet] = useState()
   const [meta, setMeta] = useState()
-  const [error, setError] = useState()
+  const [error, setError] = useState<Error | undefined>()
 
   useEffect(() => {
     if (!wallet) {
@@ -49,10 +50,10 @@ export default () => {
     async function fetchMeta() {
       const [response, err] = await getCurrentMeta()
 
-      console.log("meta", response, err)
-
       if (err) {
-        return setError(err)
+        setMeta(DONATION_META)
+        console.error("Failed to fetch meta", err)
+        // return setError(err)
       }
 
       if (response && response.meta) {

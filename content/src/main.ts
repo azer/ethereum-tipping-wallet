@@ -21,8 +21,11 @@ export function readWalletInfoFromMeta(msg: Message, callback: Callback) {
     meta("wallet:recommendedAmount") ||
     meta("wallet:recommended-amount") ||
     meta("wallet:recommendedamount")
-  const title = meta("wallet:title") || meta("og:title")
-  const description = meta("wallet:description") || meta("og:description")
+  const title = meta("wallet:title") || meta("og:title") || document.title
+  const description =
+    meta("wallet:description") ||
+    meta("og:description") ||
+    `On ${cleanHost(document.location.host)}`
   const image = meta("wallet:image") || meta("og:image")
 
   return callback(undefined, {
@@ -33,7 +36,7 @@ export function readWalletInfoFromMeta(msg: Message, callback: Callback) {
       description,
       image,
       recommendedAmount,
-      host: document.location.host
+      host: cleanHost(document.location.host)
     }
   })
 }
@@ -51,6 +54,10 @@ function meta(property: string): string | null {
 function findMetaElement(property: string): HTMLMetaElement | null {
   return (
     document.querySelector(`meta[name='${property}']`) ||
-    document.querySelector(`meta[name='${property}']`)
+    document.querySelector(`meta[property='${property}']`)
   )
+}
+
+function cleanHost(host: string): string {
+  return host.replace(/^www\./, "")
 }

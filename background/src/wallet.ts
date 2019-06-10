@@ -20,7 +20,13 @@ export function createWallet(msg: Message, callback: Callback) {
 
   const w = work(require("./workers/create-wallet"))
   w.addEventListener("message", function(ev: { data: string }) {
-    const wallet = JSON.parse(ev.data).wallet
+    const parsed = JSON.parse(ev.data)
+    const error = parsed.error
+    if (error) {
+      return callback(new Error(error))
+    }
+
+    const wallet = parsed.wallet
     context.setWallet(wallet)
     callback(undefined, {
       wallet: context.getWallet()
@@ -79,7 +85,13 @@ export function restoreWalletByKeystore(msg: Message, callback: Callback) {
 
   const w = work(require("./workers/restore-wallet"))
   w.addEventListener("message", function(ev: { data: string }) {
-    const wallet = JSON.parse(ev.data).wallet
+    const parsed = JSON.parse(ev.data)
+    const error = parsed.error
+    if (error) {
+      return callback(new Error(error))
+    }
+
+    const wallet = parsed.wallet
     context.setWallet(wallet)
     callback(undefined, {
       wallet: context.getWallet()

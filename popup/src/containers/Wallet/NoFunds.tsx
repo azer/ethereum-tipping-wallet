@@ -12,17 +12,15 @@ interface IProps {
   setError: (error: Error) => void
   signout: () => void
   error?: Error
-  onClickSkip: () => void
+  hideDepositDialog: () => void
 }
 
-export default ({ error, wallet, signout, onClickSkip }: IProps) => {
+export default ({ error, hideDepositDialog, wallet, signout }: IProps) => {
   return (
     <Dialog>
       <Header
-        title={"Almost there!"}
-        desc={
-          "Your wallet doesn't have funds yet. Please deposit some $ETH to start."
-        }
+        title={"Not enough funds"}
+        desc={"Please deposit some $ETH to your account."}
       />
       <TextField
         label="Your Wallet Address:"
@@ -32,8 +30,8 @@ export default ({ error, wallet, signout, onClickSkip }: IProps) => {
         value={`0x${wallet.address}`}
       />
       <Buttons>
-        <Button onClick={onClickSkip} primary>
-          Next
+        <Button onClick={hideDepositDialog} primary>
+          Skip
         </Button>
       </Buttons>
       <FooterButton>

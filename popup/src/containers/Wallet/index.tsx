@@ -3,11 +3,15 @@ import { getBalance, getGasPrice, getGasLimit, IWallet } from "../../eth"
 import { IMeta } from "../../tab"
 import NoFunds from "./NoFunds"
 import Tip from "./Tip"
+import NotAvailable from "./NotAvailable"
+import Transfer from "./Transfer"
+import Dialog from "../../components/Dialog"
+import Callout from "../../components/Callout"
 
 interface IProps {
   wallet: IWallet
   meta: IMeta
-  setError: (error: Error) => void
+  setError: (error: Error | undefined) => void
   signout: () => void
   error?: Error
 }
@@ -16,8 +20,17 @@ export default ({ wallet, meta, error, setError, signout }: IProps) => {
   const [balance, setBalance] = useState()
   const [gasPrice, setGasPrice] = useState()
   const [gasLimit, setGasLimit] = useState()
-  const [skipNoFundsDialog, setSkipNoFundsDialog] = useState(false)
-  const onClickSkipNoFunds = () => setSkipNoFundsDialog(true)
+  const [showDepositDialog, setShowDepositDialog] = useState(false)
+  const [showTransferDialog, setShowTransferDialog] = useState(false)
+
+  const onClickShowDepositDialog = () => setShowDepositDialog(true)
+  const onClickHideDepositDialog = () => setShowDepositDialog(false)
+  const onClickShowTransferDialog = () => {
+    setShowTransferDialog(false)
+    setShowTransferDialog(true)
+    setError(undefined)
+  }
+  const onClickHideTransferDialog = () => setShowTransferDialog(false)
 
   useEffect(() => {
     fetchBalance()
@@ -58,20 +71,59 @@ export default ({ wallet, meta, error, setError, signout }: IProps) => {
     }
   }, [])
 
-  if (isEmpty(balance) && !skipNoFundsDialog) {
+  if (showDepositDialog) {
     return (
       <NoFunds
         wallet={wallet}
         setError={setError}
         signout={signout}
         error={error}
-        onClickSkip={onClickSkipNoFunds}
+        hideDepositDialog={onClickHideDepositDialog}
       />
     )
   }
 
   if (!meta) {
-    return null
+    return (
+      <Dialog>
+        <Callout error="Unable to read the content of the page. Please refresh." />
+      </Dialog>
+    )
+  }
+
+  if (showTransferDialog) {
+    return (
+      <Transfer
+        wallet={wallet}
+        balance={balance}
+        error={error}
+        setError={setError}
+        showDepositDialog={onClickShowDepositDialog}
+        showTransferDialog={onClickShowTransferDialog}
+        hideTransferDialog={onClickHideTransferDialog}
+        gasPrice={gasPrice}
+        gasLimit={gasLimit}
+      />
+    )
+  }
+
+  if (
+    !meta ||
+    (meta && meta.currency && meta.currency.toLowerCase() !== "eth") ||
+    (meta && !meta.address) ||
+    (meta && !meta.currency)
+  ) {
+    return (
+      <NotAvailable
+        wallet={wallet}
+        meta={meta}
+        balance={balance}
+        error={error}
+        setError={setError}
+        showDepositDialog={onClickShowDepositDialog}
+        showTransferDialog={onClickShowTransferDialog}
+      />
+    )
   }
 
   return (
@@ -84,10 +136,7 @@ export default ({ wallet, meta, error, setError, signout }: IProps) => {
       setError={setError}
       signout={signout}
       error={error}
+      showDepositDialog={onClickShowDepositDialog}
     />
   )
-}
-
-function isEmpty(balance: string): boolean {
-  return Number(balance) === 0
 }

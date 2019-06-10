@@ -4,7 +4,7 @@
   "description": "Reward your favorite websites with Ethereum",
   "version": "1.0",
   "browser_action": {
-    "default_icon": "./popup/images/give-money.png",
+    "default_icon": "./popup/images/icon-grey.png",
     "default_title": "Tip",
     "default_popup": "./popup/index.html"
   },

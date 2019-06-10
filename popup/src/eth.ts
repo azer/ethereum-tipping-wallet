@@ -109,7 +109,7 @@ export function getGasLimit(): Promise<
   }) as Promise<[{ gasLimit: string | null }, Error | null]>
 }
 
-export function transferTips(
+export function transferFunds(
   to: string,
   amount: string
 ): Promise<[{ txhash: string | null }, Error | null]> {

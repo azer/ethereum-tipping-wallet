@@ -62,18 +62,22 @@ export async function transferTips(msg: Message, callback: Callback) {
     return callback(new Error("Wallet is inaccessible."))
   }
 
-  const [txhash, err] = await transferFunds(
-    "0x" + (context.wallet.address || ""),
-    to,
-    context.wallet.privateKey || "",
-    amount
-  )
+  try {
+    const [txhash, err] = await transferFunds(
+      "0x" + (context.wallet.address || ""),
+      to,
+      context.wallet.privateKey || "",
+      amount
+    )
 
-  if (err) {
-    return callback(err)
+    if (err) {
+      return callback(err)
+    }
+
+    callback(undefined, { txhash: txhash })
+  } catch (err) {
+    callback(err)
   }
-
-  callback(undefined, { txhash: txhash })
 }
 
 export async function transferFunds(
@@ -105,7 +109,7 @@ export async function transferFunds(
     data: ""
   })
 
-  tx.sign(privateKey)
+  tx.sign(Buffer.from(privateKey, "hex"))
 
   return sendTransaction("0x" + tx.serialize().toString("hex"))
 }

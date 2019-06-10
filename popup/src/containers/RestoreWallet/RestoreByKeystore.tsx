@@ -7,6 +7,7 @@ import Form, { Buttons } from "../../components/Form"
 import FooterButton from "../../components/FooterButton"
 import Button from "../../components/Button"
 import { IWallet, restoreWalletByKeystore } from "../../eth"
+import Spinner from "../../components/Spinner"
 
 interface IProps {
   createNewWallet: () => void
@@ -77,7 +78,7 @@ export default ({
       </Form>
       <Buttons>
         <Button onClick={onClickRestore} primary disabled={inProgress}>
-          {inProgress ? "Please wait..." : "Continue"}
+          {inProgress ? <Spinner /> : "Continue"}
         </Button>
       </Buttons>
       <FooterButton>

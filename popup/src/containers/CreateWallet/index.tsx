@@ -7,6 +7,7 @@ import FooterButton from "../../components/FooterButton"
 import { Buttons } from "../../components/Form"
 import Header from "../../components/Header"
 import Callout from "../../components/Callout"
+import Spinner from "../../components/Spinner"
 
 interface IProps {
   restoreWallet: () => void
@@ -113,7 +114,7 @@ export default ({
       />
       <Buttons>
         <Button onClick={onClickCreate} primary disabled={inprogress}>
-          {inprogress ? "Please wait..." : "Next"}
+          {inprogress ? <Spinner /> : "Next"}
         </Button>
       </Buttons>
       <FooterButton>
