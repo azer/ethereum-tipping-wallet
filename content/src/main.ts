@@ -29,6 +29,7 @@ export function readWalletInfoFromMeta(msg: Message, callback: Callback) {
   const image = meta("wallet:image") || meta("og:image")
 
   return callback(undefined, {
+    url: document.location.href,
     meta: {
       currency,
       address,

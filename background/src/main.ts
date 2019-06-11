@@ -47,9 +47,16 @@ async function onTabActivate() {
 
   try {
     const [response, error] = await getCurrentMeta()
+    const activeUrl = await getActiveUrl()
+
     if (!error && response.meta && response.meta.currency) {
       icon = "icon-blue"
       title = "This page accepts tips"
+    }
+
+    if (!error && response.url !== activeUrl) {
+      console.log("tab switched already", response.url, activeUrl)
+      return
     }
   } catch (err) {
     console.error(err)
@@ -63,13 +70,22 @@ async function onTabActivate() {
   chrome.browserAction.setTitle({ title })
 }
 
+export function getActiveUrl(): Promise<string> {
+  return new Promise(resolve => {
+    // @ts-ignore
+    chrome.tabs.query({ currentWindow: true, active: true }, function(tabs) {
+      resolve(tabs[0].url)
+    })
+  })
+}
+
 export function getCurrentMeta(): Promise<
-  [{ meta: IMeta | null }, Error | null]
+  [{ url: string; meta: IMeta | null }, Error | null]
 > {
   return messagingClient.send({
     to: "tips:content",
     content: { command: "readWalletInfoFromMeta" },
     requiresReply: true,
     currentTab: true
-  }) as Promise<[{ meta: IMeta | null }, Error | null]>
+  }) as Promise<[{ url: string; meta: IMeta | null }, Error | null]>
 }
