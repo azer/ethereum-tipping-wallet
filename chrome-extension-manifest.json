@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
-  "name": "Tip - Reward your favorite websites with Ethereum",
-  "description": "Reward your favorite websites with Ethereum",
+  "name": "Tipping Wallet",
+  "description": "Send tips to websites via Ethereum protocol",
   "version": "1.0",
   "browser_action": {
     "default_icon": "./popup/images/icon-grey.png",
@@ -21,5 +21,9 @@
   "permissions": [
     "activeTab",
     "tabs"
-  ]
+  ],
+  "icons": { "16": "./icon16.png",
+             "48": "./icon48.png",
+             "128": "./icon128.png"
+  }
 }

@@ -11,11 +11,16 @@ help: Makefile
 	@sed -n 's/^##//p' $< | column -t -s ':' |  sed -e 's/^/ /'
 	@echo
 
+## zip: Create a tarball from the build under dist directory.
+zip:
+	@zip -r $(PROJECTNAME).zip dist
+
 ## build: Build everything into 'dist' folder.
 build: chrome/build background/compile content/compile popup/compile
 
 ## chrome/build: Build Chrome extension files
 chrome/build:
+	@cp icons/* dist/.
 	@cp chrome-extension-manifest.json dist/manifest.json
 
 ## background/compile: Compile TypeScript into JavaScript

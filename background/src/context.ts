@@ -1,5 +1,5 @@
 const DEFAULT_NODE =
-  "https://rinkeby.infura.io/v3/904887681c6c4f2d9f4a9ad99b3fa601"
+  "https://mainnet.infura.io/v3/904887681c6c4f2d9f4a9ad99b3fa601"
 
 export interface IWallet {
   address: string
