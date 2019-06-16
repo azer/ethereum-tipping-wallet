@@ -4,6 +4,17 @@ A browser extension for tipping web pages by sending Ethereum directly. Check ou
 
 ![](https://cldup.com/6NvYSop4Ut.png)
 
+## Installation
+
+Follow the steps below:
+
+1. [Download](https://github.com/azer/ethereum-tipping-wallet/releases/download/1.0/ethereum-tipping-wallet-v1.0.zip)
+2. Unpack it
+3. Open "Extensions" in Chrome
+4. Select "Load Unpack"
+5. Point to the folder unpacked
+6. Done!
+
 ## How does it work ? 
 
 Define your wallet inside <meta> fields in your web page:
