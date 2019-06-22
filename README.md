@@ -6,6 +6,8 @@ A browser extension for tipping web pages by sending Ethereum directly. Check ou
 
 ## Installation
 
+**WARNING:** This software is built for experimental purposes and hasn't been reviewed or audited yet. Use it your own risk.
+
 Follow the steps below:
 
 1. [Download](https://github.com/azer/ethereum-tipping-wallet/releases/download/1.0/ethereum-tipping-wallet-v1.0.zip)
