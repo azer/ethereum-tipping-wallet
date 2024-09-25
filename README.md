@@ -1,8 +1,12 @@
 # ethereum-tipping-wallet
 
-A browser extension for tipping web pages by sending Ethereum directly. Check out the screenshot below:
+A browser extension for tipping web pages by sending Ethereum directly. [Blog](https://azerkoculu.com/posts/decentralized-tipping-for-websites)
+
+Check out the screenshot below:
 
 ![](https://cldup.com/6NvYSop4Ut.png)
+
+How does it work: 
 
 ## Installation
 
